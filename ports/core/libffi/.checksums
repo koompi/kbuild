@@ -1,0 +1,5 @@
+5e98427d104f2eec7dca99b1ded4c10f  0001-Address-platforms-with-no-__int128-part2.patch
+a7a9b89807ea8e4b63e7bf78256de618  0001-Address-platforms-with-no-__int128.patch
+075a9032767258d6e16752f450033580  0001-ffi_powerpc.h-fix-build-failure-with-powerpc7.patch
+2839c274775dbac5fc7adc0e3561077d  0001-powerpc-fix-build-failure-on-power7-and-older-532.patch
+6313289e32f1d38a9df4770b014a2ca7  libffi-3.3.tar.gz

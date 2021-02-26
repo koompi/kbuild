@@ -1,0 +1,22 @@
+# description: XML-XCB protocol descriptions
+# depends: libxml2
+
+name=xcb-proto
+version=1.14.1
+release=1
+source="https://xorg.freedesktop.org/archive/individual/proto/$name-$version.tar.xz"
+
+build() {
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd $name-$version
+
+	./configure $flags \
+		--prefix=/usr
+	
+	make
+	make DESTDIR=$PKG install
+
+}

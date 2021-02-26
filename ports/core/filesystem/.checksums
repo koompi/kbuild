@@ -1,0 +1,14 @@
+7a1b18ab1823ffafa5d87bd48a52c981  dhcpcd.conf
+71aacf6d19edc95c7e1acd5acdd9672d  fstab
+e33696c8bb9ef9b4244c7ef87c8bbd5f  group
+7878ba5a9044c85d06fa68b456488141  hostname
+73b50995f63c6d88f5137db0759d6e92  hosts
+ae8770e6563546c71f01d5fbbff36c5f  issue
+5cbb5efc6adba814bafb91e534b09836  locale.conf
+6336f6a759a3cff8a5f02daabf3c9be3  locale.sh
+91874ee39186fb91b3f1f10e9620dcb8  lsb-release
+e52edfa603635edf1c9bcd2766e92c03  os-release
+bfe9249b4795a914d3f7ab796117abc7  passwd
+63a0c61fe49075482b5fce1438f0b91b  profile
+3e47d3ddb26a72616c5889a4f266cadf  resolv.conf
+37c1f2bc904ef01f13a8ed4d3e846f98  shells

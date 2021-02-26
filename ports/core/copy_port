@@ -1,0 +1,15 @@
+#!/bin/bash
+
+base_pkg="cross-scratchpkg linux-headers cross-binutils cross-gcc-pass1 cross-musl cross-gcc-pass2
+	filesystem man-pages musl tzdata zlib bzip2 xz file ncurses readline m4 bc binutils gmp mpfr libmpc attr acl shadow
+	gcc pkgconf libcap sed psmisc iana-etc bison flex grep bash libtool gdbm gperf expat inetutils perl
+	autoconf automake kmod gettext libuargp musl-fts elfutils libressl coreutils diffutils gawk findutils
+	less gzip libmnl iproute2 kbd libpipeline make patch man-db tar texinfo vim procps-ng pcre2 util-linux e2fsprogs
+	sysklogd eudev dhcpcd libarchive curl httpup scratchpkg runit runit-bootscripts ca-certificates base"
+
+
+base_pkg_live="python3-mako llvm elfutils bison flex libxext libxdamage libxshmfence libxxf86vm libxrandr libdrm libglvnd"
+	for file in $base_pkg_live; do
+		cp -r /clone/scratch-port/core/$file .
+		# echo "~/test/os-core/ports/$file ."
+	done

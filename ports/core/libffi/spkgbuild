@@ -1,0 +1,32 @@
+# description: Portable foreign function interface library
+# Section:     libs
+
+name=libffi
+version=3.3
+release=1
+options=('bootstrap')
+source="https://github.com/libffi/libffi/releases/download/v${version/+/-}/libffi-${version/+/-}.tar.gz
+	0001-powerpc-fix-build-failure-on-power7-and-older-532.patch
+	0001-Address-platforms-with-no-__int128.patch
+	0001-Address-platforms-with-no-__int128-part2.patch
+	0001-ffi_powerpc.h-fix-build-failure-with-powerpc7.patch"
+
+build() {
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd $name-${version/+/-}
+	patch -Np1 -i "$SRC"/0001-powerpc-fix-build-failure-on-power7-and-older-532.patch
+	patch -Np1 -i "$SRC"/0001-Address-platforms-with-no-__int128.patch
+	patch -Np1 -i "$SRC"/0001-Address-platforms-with-no-__int128-part2.patch
+	patch -Np1 -i "$SRC"/0001-ffi_powerpc.h-fix-build-failure-with-powerpc7.patch
+
+	./configure $flags \
+		--prefix=/usr \
+		--enable-pax_emutramp \
+		--disable-static
+	make
+	make DESTDIR="$PKG" install
+}
+

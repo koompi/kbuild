@@ -1,0 +1,22 @@
+# description: X11 authorisation library
+# depends :  xorgproto
+# Section:     x11
+
+name=libxau
+version=1.0.9
+release=1
+source="https://xorg.freedesktop.org/releases/individual/lib/$(echo $name | sed -e 's,libx,libX,g')-$version.tar.bz2"
+
+build() {
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd $(echo $name | sed -e 's,libx,libX,g')-$version
+	./configure $flags \
+		--prefix=/usr \
+		--sysconfdir=/etc
+	make
+	make DESTDIR="$PKG" install
+}
+

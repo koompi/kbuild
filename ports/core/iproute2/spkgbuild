@@ -1,0 +1,29 @@
+# description	: Programs for basic and advanced IPV4-based networking
+# homepage	: http://www.linuxfoundation.org/collaborate/workgroups/networking/iproute2
+# depends	: elfutils libcap
+
+name=iproute2
+version=5.5.0
+release=1
+source="http://www.kernel.org/pub/linux/utils/net/$name/$name-$version.tar.xz
+	0001-remove-sbin.patch
+	xtables-version.h
+	0001-remove-arpd-and-two-modules.patch"
+
+build() {
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+
+	cd $name-$version
+	cp $SRC/xtables-version.h include 
+
+	#patch -Np1 -i $SRC/0001-remove-sbin.patch
+	#patch -Np1 -i $SRC/0001-remove-arpd-and-two-modules.patch
+
+	./configure $flags \
+		--prefix=/usr
+	make
+	make DESTDIR=$PKG install
+}

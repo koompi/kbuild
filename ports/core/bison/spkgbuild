@@ -1,0 +1,17 @@
+# description	: A parser generator
+# depends	: m4 bash
+
+name=bison
+version=3.7.5
+release=1
+source="https://ftp.gnu.org/gnu/$name/$name-$version.tar.xz"
+
+build() {
+	cd $name-$version
+
+	./configure --prefix=/usr --disable-nls
+	make
+	make DESTDIR=$PKG install
+
+	rm -r $PKG/usr/share/{doc,info}
+}

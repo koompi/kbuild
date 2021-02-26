@@ -1,0 +1,21 @@
+description="Shell alternative"
+name=dash
+version=0.5.10.2
+release=1
+source="http://gondor.apana.org.au/~herbert/dash/files/dash-$version.tar.gz"
+
+
+build() {
+
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd dash-$version
+
+	./configure $flags \
+		--prefix=/usr
+	make
+	make DESTDIR=$PKG install
+	#ln -s dash.1 $PKG/share/man/man1/sh.1
+}

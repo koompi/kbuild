@@ -1,0 +1,8 @@
+6bc8334fcbde2366657da66c8fb14bb0  0006-Fix-build-on-aarch64-musl.patch
+5480d0b7174446aba13a6adde107287f  elfutils-0.178.tar.bz2
+4a1adec6b662b4fbc17fa59bc9e0f9db  error.h
+cb78f8db031920c8ddb9e7cc96c004aa  fts.patch
+dd3fa500aa72ad0cb89ee6e7e1825bef  musl-libs.patch
+8ebc717294273f2f6f9195e9fb4bfa93  musl-tests.patch
+5adad59ee67d430138d79865dfe83a76  musl-utils.patch
+04617483957dd2d7208ce07f1a3c1edf  no-werror.patch

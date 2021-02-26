@@ -1,0 +1,6 @@
+605f5e26038c4e8390134f73c6aecc7c  0001-Don-t-search-system-for-headers-libraries.patch
+2861451e807cec79f4427a8beb679cdf  0001-distutils-sysconfig-append-STAGING_LIBDIR-python-sys.patch
+efbd94ad33a9e063826cf23f4f96a7bb  0030-Fix-cross-compiling-the-uuid-module.patch
+344aa2aa275f7a05a4c8638c9d21ba46  12-distutils-prefix-is-inside-staging-area.patch
+61981498e75ac8f00adcb908281fadb6  Python-3.9.1.tar.xz
+17b8fedb4717c81fbe58ee42d5f9b068  cross.patch
