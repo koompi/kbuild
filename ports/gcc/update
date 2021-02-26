@@ -1,0 +1,7 @@
+url=$(dirname $url)
+
+port_getver() {
+	fetch_src \
+	| grep -Eo gcc-[0-9.]+ \
+	| sed "s/$name-//"
+}

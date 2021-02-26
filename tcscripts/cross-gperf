@@ -1,0 +1,18 @@
+# description	: Generates a perfect hash function from a key set
+# homepage	: http://www.gnu.org/software/gperf/
+
+name=gperf
+version=3.1
+release=1
+source="http://ftp.gnu.org/gnu/gperf/$name-$version.tar.gz"
+
+
+build() {
+	cd gperf-$version
+	./configure \
+		--prefix="$TCDIR" \
+		--target="$TARGET" \
+		--with-sysroot="$ROOTFS" \
+	make
+	make install
+}

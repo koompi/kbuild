@@ -1,0 +1,20 @@
+name=musl-obstack
+version=1.1
+release=1
+source="https://github.com/pullmoll/musl-obstack/archive/v${version}.tar.gz"
+
+build() {
+
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	export CFLAGS="-fPIC"
+	cd musl-obstack-$version
+
+	./bootstrap.sh
+	./configure $flags --prefix=/usr
+	make
+	make DESTDIR="$PKG" install
+	install -Dm644 musl-obstack.pc "$PKG"/lib/pkgconfig/musl-obstack.pc
+}

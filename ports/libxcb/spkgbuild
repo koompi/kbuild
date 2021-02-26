@@ -1,0 +1,25 @@
+# description: X11 client-side library
+# depends : util-macros xcb-proto libxau libxdmcp
+# Section: x11
+
+name=libxcb
+version=1.14
+release=1
+source="https://xcb.freedesktop.org/dist/$name-$version.tar.xz"
+
+build() {
+	if [ "BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd $name-$version
+	sed -i "s/pthread-stubs//" configure
+	./configure $flags \
+			--prefix=/usr \
+			--without-doxygen \
+			--enable-xinput \
+			--enable-xkb
+	make -j1
+	make DESTDIR="$PKG" install
+}
+

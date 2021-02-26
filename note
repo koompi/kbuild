@@ -1,0 +1,8 @@
+known bugs right now:
+1. need to remove conflict file, ex: /usr/include/libintl.h
+2. need to link from /bin/* - /usr/bin*
+3. not found package eventhough package already install: ex: gperf, elfutil
+4. cannot compile eudev from script and need to compile by hand
+5. cannot compile runit-bootscript from script which mean i have to chroot into ROOTFS and build it.
+6. same goes to Kernel also, reason maybe ELFUTIL|Libelf
+7. after going to build kernel i found another error: sed and grep is not in /usr/bin/

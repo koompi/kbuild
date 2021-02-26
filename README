@@ -1,0 +1,1 @@
+This folder contain KOOMPI build srcript which is used for compiling KOOMPI LINUX FROM SCRATCH based on musl libc and using runit as an init system.

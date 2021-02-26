@@ -1,0 +1,25 @@
+# description: X transport library
+# depends:  util-macros
+# Section:  x11
+
+name=xtrans
+version=1.4.0
+release=1
+options=('~emptydirs')
+source="https://xorg.freedesktop.org/releases/individual/lib/$name-$version.tar.bz2"
+
+build() {
+
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd $name-$version
+
+	./configure $flags \
+		--prefix=/usr
+
+	make
+	make DESTDIR=$PKG install
+
+}

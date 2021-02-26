@@ -1,0 +1,19 @@
+# description	: A parser generator
+# homepage	: http://www.gnu.org/software/bison/bison.html
+
+name=bison
+version=3.5.3
+release=1
+source="http://ftp.gnu.org/gnu/$name/$name-$version.tar.xz"
+
+build() {
+	if [ "$BOOTSTRAP" ]; then
+		flags="--host=$TARGET --build=$HOST"
+	fi
+
+	cd $name-$version
+
+	./configure $flags --prefix=/usr --disable-nls
+	make
+	make DESTDIR=$PKG install
+}
