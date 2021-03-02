@@ -23,7 +23,7 @@ unmount() {
 	done
 }
 
-fetch_src() {
+fetch() {
 	filename=$(basename $1)
 	url=$1
 	wgetcmd="wget --passive-ftp --tries=3 --waitretry=3 --output-document=$SRCDIR/$filename.part"
@@ -35,15 +35,15 @@ fetch_src() {
 	fi
 }
 
-extract_src() {
-	rm -fr "$WORKDIR/$name"
-	mkdir -p "$WORKDIR/$name"
+unpack() {
+	rm -fr "$BUILDDIR/$name"
+	mkdir -p "$BUILDDIR/$name"
 	for src in $source; do
 		filename=$(basename $src)
 		case $src in
 			*.tar|*.tar.gz|*.tar.Z|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz|*.tar.lzma|*.zip)
 				msg "extracting $filename..."
-				tar -xf "$SRCDIR/$filename" -C "$WORKDIR/$name" || {
+				tar -xf "$SRCDIR/$filename" -C "$BUILDDIR/$name" || {
 					msgerr "failed extracting $filename"
 					exit 1
 				};;
@@ -61,9 +61,9 @@ ports() {
 		return 1
 	}
 	cd $PORTSDIR/$1
-	set_term_title "Building '$1'..."
+	settermtitle "Building '$1'..."
 	pkgbuild -c --config=$PKGBUILDCONF --root=$ROOTFS -i --no-preinstall --no-postinstall || {
-		set_term_title "Building '$1' failed."
+		settermtitle "Building '$1' failed."
 		exit 1
 	}
 	cd - >/dev/null
@@ -76,36 +76,36 @@ cross_compiler() {
 	source $TCSCRIPTDIR/$1
 	if [ "$source" ]; then
 		for src in $source; do
-			 $src
+			fetch $src
 		done
 	fi
 
-	extract_src || {
-		msgerr "Failed to extract_src '$(basename $source)'."
+	unpack || {
+		msgerr "Failed to unpack '$(basename $source)'."
 		return 1
 	}
 
-	cd "$WORKDIR/$name"
+	cd "$BUILDDIR/$name"
 
 	if [ "$(type -t build)" = "function" ]; then
-		set_term_title "Building '$1'..."
+		settermtitle "Building '$1'..."
 		(set -e -x; build 2>&1)
 		if [ "$?" != 0 ]; then
-			set_term_title "Building '$1' failed"
+			settermtitle "Building '$1' failed"
 			msgerr "'build' failed"
 			exit 1
 		else
-			set_term_title "Building '$1' completed"
+			settermtitle "Building '$1' completed"
 			msg "Cross toolchain build for '$name-$version' completed."
 			touch "$TCDIR/$1"
-			rm -fr "$WORKDIR/$name"
+			rm -fr "$BUILDDIR/$name"
 		fi
 	fi
 
 	cd - >/dev/null
 }
 
-set_term_title() {
+settermtitle() {
 	echo -en "\033]0;$*\a"
 }
 
@@ -139,7 +139,7 @@ CXXFLAGS="$CXXFLAGS"
 
 SOURCE_DIR="$SRCDIR"
 PACKAGE_DIR="$PKGDIR"
-WORK_DIR="$WORKDIR"
+WORK_DIR="$BUILDDIR"
 EOF
 }
 
@@ -156,7 +156,7 @@ build_livecd() {
 }
 
 build_base() {
-	for b in $base; do
+	for b in $base_pkg; do
 		case $b in
 			cross-*) cross_compiler $b || exit $?;;
 				  *) ports $b || exit $?;;
@@ -250,7 +250,7 @@ make_liveworkdir() {
 	done
 
 	cp "$FILESDIR"/isolinux.cfg "$LIVEWDIR"/isolinux
-	[ -d livefilesystem ] && cp -Ra livefilesystem "$LIVEWDIR"
+	[ -d liverootfs ] && cp -Ra liverootfs "$LIVEWDIR"
 }
 
 cleaning() {
@@ -259,10 +259,10 @@ cleaning() {
 }
 
 build_rootfs() {
-	rm -f "$CWD"/koompilinux-rootfs.tar.xz
+	rm -f "$BUILDROOT"/koompilinux-rootfs.tar.xz
 	pushd "$ROOTFS" >/dev/null
 		msg "Building rootfs image..."
-		tar -cvJpf "$CWD"/koompilinux-rootfs.tar.xz *
+		tar -cvJpf "$BUILDROOT"/koompilinux-rootfs.tar.xz *
 	popd >/dev/null
 }
 
@@ -327,7 +327,7 @@ sysup_rootfs() {
 	return $exitstatus
 }
 
-parser() {
+parse_opts() {
 	while [ "$1" ]; do
 		case $1 in
 			-jobs=*) JOBS=${1#*=};;
@@ -351,7 +351,7 @@ parser() {
 main() {
 	checkroot
 
-	mkdir -p "$ROOTFS" "$WORKDIR" "$SRCDIR" "$PKGDIR" "$TCDIR"
+	mkdir -p "$ROOTFS" "$BUILDDIR" "$SRCDIR" "$PKGDIR" "$TCDIR"
 
 	#umount_any_mounted
 	setup_pkgbuildconf
@@ -368,25 +368,25 @@ main() {
 	[ "$LIVE" = 1 ] && build_livecd
 }
 
-parser "$@"
+parse_opts "$@"
 
-CWD=$(pwd)
-TCDIR="$CWD/toolchain"
-SRCDIR="${SRCDIR:-$CWD/sources}"
-PKGDIR="${PKGDIR:-$CWD/packages}"
-PORTSDIR="$CWD/ports"
-WORKDIR="$CWD/work"
-ROOTFS="${ROOTFS:-$CWD/rootfs}"
-TCSCRIPTDIR="$CWD/tcscripts"
-PKGBUILDCONF="${PKGBUILDCONF:-$CWD/pkgbuild.conf}"
+BUILDROOT=$(pwd)
+TCDIR="$BUILDROOT/toolchain"
+SRCDIR="${SRCDIR:-$BUILDROOT/sources}"
+PKGDIR="${PKGDIR:-$BUILDROOT/packages}"
+PORTSDIR="$BUILDROOT/ports"
+BUILDDIR="$BUILDROOT/work"
+ROOTFS="${ROOTFS:-$BUILDROOT/rootfs}"
+TCSCRIPTDIR="$BUILDROOT/tcscripts"
+PKGBUILDCONF="${PKGBUILDCONF:-$BUILDROOT/pkgbuild.conf}"
 JOBS="${JOBS:-$(nproc)}"
 
 # live iso
 ISOLABEL="KOOMPILIVE"
 OUTPUT="koompilive.iso"
-LIVEWDIR="$WORKDIR/live"
-FILESDIR="$CWD/files"
-EFIBOOTDIR="$WORKDIR/efiboot"
+LIVEWDIR="$BUILDDIR/live"
+FILESDIR="$BUILDROOT/files"
+EFIBOOTDIR="$BUILDDIR/efiboot"
 
 export PATH="$TCDIR/bin:$PATH"
 
@@ -398,7 +398,7 @@ export MAKEFLAGS="-j$JOBS"
 export CFLAGS="-O2 -march=x86-64 -pipe"
 export CXXFLAGS="${CFLAGS}"
 
-base="cross-scratchpkg linux-headers cross-binutils cross-gcc-pass1 cross-musl cross-gcc-pass2 cross-gperf cross-elfutils
+base_pkg="cross-scratchpkg linux-headers cross-binutils cross-gcc-pass1 cross-musl cross-gcc-pass2 cross-gperf cross-elfutils
 	filesystem man-pages musl tzdata zlib bzip2 xz file ncurses readline m4 bc binutils gmp mpfr libmpc attr acl shadow
 	gcc pkgconf libcap sed psmisc iana-etc bison flex grep bash dash libtool gdbm gperf expat inetutils perl
 	autoconf automake kmod gettext-tiny libuargp musl-fts elfutils libressl coreutils diffutils gawk findutils groff
@@ -406,7 +406,7 @@ base="cross-scratchpkg linux-headers cross-binutils cross-gcc-pass1 cross-musl c
 	sysklogd eudev dhcpcd libarchive curl wget httpup scratchpkg runit runit-bootscripts ca-certificates base "
 
 [ "$LIVE" = 1 ] && {
-	base="$base linux-firmware fuse2 grub mkinitramfs linux efivar popt efibootmgr grub-efi links nnn lzo lz4 zstd squashfs-tools"
+	base_pkg="$base_pkg linux-firmware fuse2 grub mkinitramfs linux efivar popt efibootmgr grub-efi links nnn lzo lz4 zstd squashfs-tools"
 }
 
 main

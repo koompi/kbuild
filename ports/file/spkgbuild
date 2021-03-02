@@ -3,7 +3,7 @@
 # depends	: xz bzip2 zlib
 
 name=file
-version=5.39
+version=5.38
 release=1
 source="ftp://ftp.astron.com/pub/$name/$name-$version.tar.gz"
 
