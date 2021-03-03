@@ -1,5 +1,5 @@
 #
-# See fstab(5).
+# /etc/fstab
 #
-# <file system>	<dir>	<type>	<options>		<dump>	<pass>
-tmpfs		/tmp	tmpfs	defaults,nosuid,nodev   0       0
+
+# <device> <dir> <type> <options> <dump> <fsck>

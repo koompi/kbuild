@@ -5,19 +5,21 @@ version=1
 release=7
 backup="etc/passwd
 	etc/locale.conf
+	etc/usb.conf
 	etc/resolv.conf
 	etc/hostname
 	etc/group
 	etc/fstab
 	etc/hosts
 	etc/dhcpcd.conf
-	etc/shells"
-	etc/profile
+	etc/shells
+	etc/profile"
 source="passwd
 	group
 	resolv.conf
 	locale.conf
 	dhcpcd.conf
+	usb.conf
 	hosts
 	hostname
 	shells
@@ -77,6 +79,7 @@ build() {
 	install -m644 dhcpcd.conf $PKG/etc
 	install -m644 resolv.conf $PKG/etc
 	install -m644 locale.conf $PKG/etc
+	install -m644 usb.conf $PKG/etc
 	install -m644 hosts $PKG/etc
 	install -m644 hostname $PKG/etc
 	install -m644 shells $PKG/etc

@@ -4,9 +4,9 @@ build_hook() {
 	add_module cdrom
 	add_module loop
 	add_module overlay
-	
+
 	add_file /lib/udev/rules.d/60-cdrom_id.rules
-	         
+
 	add_binary /lib/udev/cdrom_id
 	add_binary blockdev
 	add_binary losetup
@@ -17,7 +17,7 @@ run_earlyhook() {
 	for mod in cdrom loop overlay; do
 		modprobe $mod 2>/dev/null
 	done
-	
+
 	if [ -z "$root" ]; then
 		mount_handler=mount_livecd
 	fi
@@ -25,7 +25,7 @@ run_earlyhook() {
 
 mount_livecd() {
 	newroot=$1
-		
+
 	MEDIA=/dev/disk/by-label/@ISOLABEL@
 	MEDIUM=/run/initramfs/medium
 	SYSTEM=/run/initramfs/system
@@ -34,7 +34,7 @@ mount_livecd() {
 	sfsimg=/run/initramfs/medium/koompi/rootfs.sfs
 	wait=${wait:-5}
 	count=0
-	
+
 	if [ ! -e $MEDIA ]; then
 		msg "wait for media device..."
 		while [ ! -e $MEDIA ]; do
@@ -47,12 +47,12 @@ mount_livecd() {
 			fi
 		done
 	fi
-	
+
 	mkdir -p $MEDIUM $SYSTEM $WRITEDIR $WORKDIR
-	
+
 	msg "mounting media to $MEDIUM..."
 	mount -o ro $MEDIA $MEDIUM || problem
-	
+
 	if [ "$ram" = y ]; then
 		msg "mounting /run/initramfs/ram to ram..."
 		mkdir -p /run/initramfs/ram
@@ -65,13 +65,13 @@ mount_livecd() {
 	msg "mounting squashfs img to $SYSTEM..."
 	mount -o defaults -r $sfs_dev $SYSTEM || problem
 
-	# overlayfs mount	
+	# overlayfs mount
 	msg "mounting overlays to $newroot..."
 	mount -t overlay overlay -o upperdir=$WRITEDIR,lowerdir=$SYSTEM,workdir=$WORKDIR $newroot || problem
 
-	if [ -d $MEDIUM/livefilesystem/ ]; then
+	if [ -d $MEDIUM/liverootfs/ ]; then
 		msg "copying custom files to $newroot..."
-		cp -aR $MEDIUM/livefilesystem/* $newroot/ || problem
+		cp -aR $MEDIUM/liverootfs/* $newroot/ || problem
 	fi
 
 	# Tell system to skip fsck during startup
@@ -83,7 +83,7 @@ mount_livecd() {
 		chmod +x $newroot/root/custom_script.sh
 		chroot $newroot bash /root/custom_script.sh 2>/dev/null
 	fi
-	
+
 	if [ "$ram" = y ]; then
 		umount $MEDIUM
 	fi
