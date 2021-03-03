@@ -46,6 +46,7 @@ build() {
 	      -Dnmtui=true               \
 	      -Dovs=false                \
 	      -Dppp=false                \
+	      -Dpolkit_agent=true	\
 	      -Dselinux=false            \
 	      -Dudev_dir=/lib/udev       \
 	      -Dsession_tracking=no      \
@@ -56,6 +57,7 @@ build() {
 	      -Ddocs=false               \
 	      -Dqt=false                 \
 	      -Dtests=no                 \
+	      -Dvapi=true                 \
 	      ..
 	ninja
 	DESTDIR=$PKG ninja install

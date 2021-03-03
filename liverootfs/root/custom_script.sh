@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 USER=koompi
 PASSWORD=koompi
 
@@ -9,8 +9,8 @@ passwd -d root &>/dev/null
 echo "root:root" | chpasswd -c SHA512
 echo "$USER:$PASSWORD" | chpasswd -c SHA512
 
-echo "koompi-livecd" > /etc/hostname
+echo "koompilive" > /etc/hostname
 
 for sv in dhcpcd sysklogd gpm dbus lxdm networkmanager; do
-	ln -s /etc/sv/$sv /var/service
+	ln -svf /etc/sv/$sv /var/service
 done

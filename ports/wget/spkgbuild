@@ -1,8 +1,9 @@
 # description: Network utility to retrieve files from the Web
+
 name=wget
 version=1.21.1
 release=1
-options=('bootstrap')
+# options=('bootstrap')
 source="https://ftp.gnu.org/gnu/$name/$name-$version.tar.gz"
 
 build() {

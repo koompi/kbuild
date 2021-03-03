@@ -64,5 +64,5 @@ build() {
 	DESTDIR=$PKG ninja install
 
 	# indirect rendering symlink
-	ln -s libGLX_mesa.so.0 $PKG/usr/lib/libGLX_indirect.so.0
+	ln -svf libGLX_mesa.so.0 $PKG/usr/lib/libGLX_indirect.so.0
 }
