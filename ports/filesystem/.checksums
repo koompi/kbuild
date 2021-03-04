@@ -1,5 +1,6 @@
+e6b90b8318bbc5b7ee92eb1fe0c6ad01  bashrc.skel
 7a1b18ab1823ffafa5d87bd48a52c981  dhcpcd.conf
-71aacf6d19edc95c7e1acd5acdd9672d  fstab
+2a381ac307b3f8f8223707946ff1a23a  fstab
 e33696c8bb9ef9b4244c7ef87c8bbd5f  group
 7878ba5a9044c85d06fa68b456488141  hostname
 73b50995f63c6d88f5137db0759d6e92  hosts
@@ -12,3 +13,6 @@ bfe9249b4795a914d3f7ab796117abc7  passwd
 63a0c61fe49075482b5fce1438f0b91b  profile
 3e47d3ddb26a72616c5889a4f266cadf  resolv.conf
 37c1f2bc904ef01f13a8ed4d3e846f98  shells
+e93be0ad35030668df683099b3249990  tmux.conf.skel
+2249d7af8f86efc097c30b788667a4bd  usb.conf
+7bd190475c60ccbb3fe064833d71c0fc  xinitrc.skel
