@@ -3,7 +3,8 @@
 # depends	: gobject-introspection vala glib libndp eudev curl util-linux nss nspr readline newt intltool libxslt dbus polkit python3-gobject3
 
 name=networkmanager
-version=1.22.10
+#version=1.22.10
+version=1.26.4
 release=1
 backup="etc/NetworkManager/NetworkManager.conf"
 source="http://ftp.gnome.org/pub/gnome/sources/NetworkManager/${version%.*}/NetworkManager-$version.tar.xz
@@ -36,6 +37,29 @@ build() {
 	mkdir build
 	cd    build
 	
+	#meson --prefix /usr              \
+	#      --sysconfdir /etc          \
+	#      --libexecdir lib           \
+	#      --localstatedir /var       \
+	#      -Djson_validation=false    \
+	#      -Dlibaudit=no              \
+	#      -Dlibpsl=false             \
+	#      -Dnmtui=true               \
+	#      -Dovs=false                \
+	#      -Dppp=false                \
+	#      -Dpolkit_agent=true	\
+	#      -Dselinux=false            \
+	#      -Dudev_dir=/lib/udev       \
+	#      -Dsession_tracking=no      \
+	#      -Dmodem_manager=false      \
+	#      -Dsystemdsystemunitdir=no  \
+	#      -Dsystemd_journal=false    \
+	#      -Dmodify_system=true       \
+	#      -Ddocs=false               \
+	#      -Dqt=false                 \
+	#      -Dtests=no                 \
+	#      -Dvapi=true                 \
+	#      ..
 	meson --prefix /usr              \
 	      --sysconfdir /etc          \
 	      --libexecdir lib           \
@@ -46,7 +70,6 @@ build() {
 	      -Dnmtui=true               \
 	      -Dovs=false                \
 	      -Dppp=false                \
-	      -Dpolkit_agent=true	\
 	      -Dselinux=false            \
 	      -Dudev_dir=/lib/udev       \
 	      -Dsession_tracking=no      \
@@ -57,8 +80,11 @@ build() {
 	      -Ddocs=false               \
 	      -Dqt=false                 \
 	      -Dtests=no                 \
-	      -Dvapi=true                 \
 	      ..
+
+
+
+
 	ninja
 	DESTDIR=$PKG ninja install
 

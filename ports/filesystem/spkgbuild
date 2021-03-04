@@ -28,7 +28,10 @@ source="passwd
 	profile
 	locale.sh
 	os-release
-	issue"
+	issue
+	bashrc.skel
+	tmux.conf.skel
+	xinitrc.skel"
 
 build() {
 	#  root dirs
@@ -79,7 +82,7 @@ build() {
 	install -m644 dhcpcd.conf $PKG/etc
 	install -m644 resolv.conf $PKG/etc
 	install -m644 locale.conf $PKG/etc
-	install -m644 usb.conf $PKG/etc
+	install -m644 usb.conf $PKG/etc/profile.d
 	install -m644 hosts $PKG/etc
 	install -m644 hostname $PKG/etc
 	install -m644 shells $PKG/etc
@@ -92,4 +95,11 @@ build() {
 	install -m644 locale.sh $PKG/etc/profile.d
 
 	install -m644 issue $PKG/etc
+
+	# skel
+	install -d $PKG/etc/skel
+	for s in *.skel; do
+		install -m0644 $s $PKG/etc/skel/.${s/.skel/}
+	done
+
 }

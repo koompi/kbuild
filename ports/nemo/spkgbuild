@@ -1,0 +1,17 @@
+# description: Cinnamon file manager
+# depends :  intltool meson gobject-introspection cinnamon-desktop dconf exempi libexif libnotify libxml2 python xapp
+# Section:     cinnamon
+
+name=nemo
+version=4.8.4
+release=1
+source=("https://github.com/linuxmint/nemo/archive/$version.tar.gz::archive=$name-$version.tar.gz")
+
+build() {
+	cd "$SRC"/$name-$version
+	mkdir -p build
+	cd build
+	meson "$SRC"/$name-$version
+	ninja
+	DESTDIR="$PKG" samu install
+}
