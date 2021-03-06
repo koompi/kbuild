@@ -13,6 +13,6 @@ build() {
 	make
 	make DESTDIR=$PKG install
 
-	rm -r $PKG/usr/share/locale
-	rm -r $PKG/usr/share/gtk-doc
+	rm -rf $PKG/usr/share/locale
+	rm -rf $PKG/usr/share/gtk-doc
 }

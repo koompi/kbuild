@@ -5,6 +5,8 @@ name=dbus
 version=1.12.20
 release=1
 source="https://dbus.freedesktop.org/releases/$name/$name-$version.tar.gz
+	run
+	supervise
 	rc.$name"
 
 build() {
@@ -24,9 +26,9 @@ build() {
 	make
 	make DESTDIR=$PKG install
 
-	rm -r $PKG/usr/share/doc
+	rm -rf $PKG/usr/share/doc
 
-	groupadd messagebus
+	#groupadd messagebus
 	chown -v root:messagebus $PKG/usr/lib/$name/dbus-daemon-launch-helper
 	chmod -v      4750       $PKG/usr/lib/$name/dbus-daemon-launch-helper
 

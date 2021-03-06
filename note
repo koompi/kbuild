@@ -6,3 +6,5 @@ known bugs right now:
 5. cannot compile runit-bootscript from script which mean i have to chroot into ROOTFS and build it.
 6. same goes to Kernel also, reason maybe ELFUTIL|Libelf
 7. after going to build kernel i found another error: sed and grep is not in /usr/bin/
+8. E13 not working ETH, harddisk and Wireless
+9. Hard disk working but wireless not working
