@@ -8,3 +8,5 @@ known bugs right now:
 7. after going to build kernel i found another error: sed and grep is not in /usr/bin/
 8. E13 not working ETH, harddisk and Wireless
 9. Hard disk working but wireless not working
+10. mk.fat not found install by dosftools
+11. install mesa instead of xf86-video-intel, should folk it from arch for vulkan support
