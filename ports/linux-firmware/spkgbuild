@@ -3,12 +3,15 @@
 
 name=linux-firmware
 #version=20200316
-version=20201022
+version=20210208
 release=1
 options="!strip"
 source="http://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/snapshot/linux-firmware-$version.tar.gz"
 
 build() {
 	cd $name-$version
-	make DESTDIR=$PKG install
+
+	sed -i 's/cp -d/cp/g' copy-firmware.sh
+
+	make DESTDIR="$PKG" FIRMWAREDIR=/usr/lib/firmware install
 }

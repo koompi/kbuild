@@ -8,6 +8,7 @@ release=1
 options="!strip"
 source="http://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.17.tar.xz
 	newconfig
+	venconfig
 	aconfig
 	voidconfig
 	koompiconfig
@@ -22,7 +23,8 @@ build() {
 
 	make $cross mrproper
 
-	cp $SRC/aconfig ./.config
+	cp $SRC/venconfig ./.config
+	#cp $SRC/voidconfig ./.config
 	make olddefconfig
 
 	sed '/^CONFIG_LOCALVERSION=/d' -i .config
@@ -30,7 +32,7 @@ build() {
 
 	kernver=${version}$(grep CONFIG_LOCALVERSION= .config | cut -d '"' -f2)
 
-	#make menuconfig
+	make menuconfig
 	make $cross olddefconfig
 	make $cross bzImage modules
 	make $cross INSTALL_MOD_PATH=$PKG modules_install

@@ -10,3 +10,7 @@ known bugs right now:
 9. Hard disk working but wireless not working
 10. mk.fat not found install by dosftools
 11. install mesa instead of xf86-video-intel, should folk it from arch for vulkan support
+12. Touchpad not working on all laptop model, even on my lenovo laptop
+13. Fix nvme by install pciutils /not yet know whether it works
+14. mmcblk
+15. maybe need to load modules

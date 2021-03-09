@@ -1,0 +1,17 @@
+# description: Fast and light imlib2-based image viewer
+# depends: imlib2 libexif curl libxinerama libxst
+
+name=feh
+version=3.6.3
+release=1
+source="http://feh.finalrewind.org/$name-$version.tar.bz2"
+
+build() {
+	cd $name-$version
+	make PREFIX=/usr
+	make PREFIX=/usr DESTDIR="$PKG" install
+
+
+}
+
+
