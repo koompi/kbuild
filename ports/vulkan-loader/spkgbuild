@@ -5,15 +5,15 @@
 # Section:     libs
 
 name=vulkan-loader
-version=1.2.169
+version=1.2.172
 release=1
-source="git://github.com/KhronosGroup/Vulkan-Loader.git::checkout=v$version"
+source="https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.2.172.tar.gz"
 
 build() {
-	cd "$SRC"/Vulkan-Loader.git
+	cd "$SRC"/Vulkan-Loader-1.2.172
 	mkdir -p build
 	cd build
-	cmake "$SRC"/Vulkan-Loader.git \
+	cmake "$SRC"/Vulkan-Loader-1.2.172 \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_INSTALL_LIBDIR=/usr/lib \
 		-DCMAKE_BUILD_TYPE=MinSizeRel \

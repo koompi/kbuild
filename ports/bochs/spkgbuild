@@ -1,0 +1,47 @@
+# description: A portable x86 PC emulation software package, including GUI debugger
+# depends : gcc-libs libxrandr libxpm gtk2
+
+name=bochs
+version=2.6.11
+release=1
+url="http://bochs.sourceforge.net/"
+source="https://downloads.sourceforge.net/sourceforge/$name/$name-$version.tar.gz
+        fix-build.patch"
+
+
+build() {
+    cd $SRC/$name-$version
+
+    sed -i 's/2\.6\*|3\.\*)/2.6*|3.*|4.*)/' configure*
+
+    patch -Np1 -i $SRC/fix-build.patch
+
+    ./configure \
+        --prefix=/usr \
+        --without-wx \
+        --with-x11 \
+        --with-x \
+        --disable-docbook \
+        --enable-cpu-level=6 \
+        --enable-fpu \
+        --enable-3dnow \
+        --enable-disasm \
+        --enable-smp \
+        --enable-x86-64 \
+        --enable-avx \
+	--enable-evex \
+        --enable-long-phy-address \
+        --enable-disasm \
+        --enable-pcidev \
+        --enable-usb \
+        --enable-debugger
+        #--with-sdl
+        #--enable-x86-debugger
+        #--enable-all-optimizations
+        #--enable-plugins
+    sed -i 's/^LIBS = /LIBS = -lpthread/g' Makefile
+    make -j 1
+
+    make DESTDIR="$PKG" install
+    install -Dm644 .bochsrc "$PKG/etc/bochsrc-sample.txt"
+}

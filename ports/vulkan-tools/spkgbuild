@@ -1,0 +1,39 @@
+# description: Vulkan Installable Client Driver Loader
+# URL:         https://www.khronos.org/vulkan/
+# Maintainer:  protonesso, nagakamira at gmail dot com
+# depends:  git cmake ninja vulkan-headers python2-lxml libx11 libxrandr wayland glslang
+# Section:     libs
+
+name=vulkan-tools
+version=1.2.172
+release=1
+source="https://github.com/KhronosGroup/Vulkan-Tools/archive/v1.2.172.tar.gz"
+
+build() {
+	cd "${SRC}"/Vulkan-Tools-*
+
+	mkdir -pv build && cd build
+
+	cmake \
+	    -DCMAKE_INSTALL_PREFIX=/usr \
+	    -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+	    -DCMAKE_INSTALL_DATADIR=/usr/share \
+	    -DCMAKE_SKIP_RPATH=True \
+	    -DBUILD_WSI_XLIB_SUPPORT=On \
+	    -DBUILD_WSI_XCB_SUPPORT=On \
+            -DBUILD_WSI_WAYLAND_SUPPORT=On \
+	    -DBUILD_CUBE=ON \
+	    -DBUILD_VULKANINFO=ON \
+	    -DBUILD_ICD=OFF \
+	    -DGLSLANG_INSTALL_DIR=/usr \
+	    -DCMAKE_BUILD_TYPE=Release \
+	    ..
+		
+	  make
+
+	  make DESTDIR="${PKG}" install
+
+	  install -dm755 "${PKG}"/usr/share/licenses/${name}
+	  install -m644 ../LICENSE.txt "${PKG}"/usr/share/licenses/${name}/
+
+}

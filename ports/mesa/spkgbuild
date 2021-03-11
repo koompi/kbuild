@@ -1,5 +1,5 @@
 # description	: OpenGL compatible 3D graphics library
-# depends	: zstd libelf llvm python3-mako xorgproto wayland-protocols libx11 libxdamage libxrandr libxshmfence libxvmc libxxf86vm libdrm libva libvdpau libglvnd lm_sensors vulkan-loader
+# depends	: zstd llvm python3-mako xorgproto wayland-protocols libx11 libxdamage libxrandr libxshmfence libxvmc libxxf86vm libdrm libva libvdpau libglvnd lm_sensors vulkan-loader
 
 name=mesa
 version=20.3.4
@@ -39,13 +39,11 @@ build() {
 	#      -Dvulkan-drivers=amd,intel \
 	#      -Ddri-drivers=i915,i965,nouveau \
 	#      ..
--Duse-elf-tls=false
 	meson --prefix=/usr \
 	      --sysconfdir=/etc \
 	      -Dvalgrind=disabled \
 	      -Dglx=dri \
 	      -Degl=enabled \
-		-Duse-elf-tls=false \
 	      -Delf-use-tls=false \
 	      -Dgbm=enabled \
 	      -Dgles1=enabled \

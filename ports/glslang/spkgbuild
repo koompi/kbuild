@@ -1,0 +1,40 @@
+# description: OpenGL and OpenGL ES shader front end and validator
+
+name=glslang
+version=11.2.0
+release=1
+url='https://github.com/KhronosGroup/glslang'
+options=('staticlibs')
+source="${name}-${version}.tar.gz::https://github.com/KhronosGroup/glslang/archive/${version}.tar.gz"
+
+build() {
+  cd ${name}-${version}
+  mkdir -p build-{shared,static}
+  (cd build-shared
+    cmake .. \
+      -GNinja \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON
+    ninja
+  )
+  (cd build-static
+    cmake .. \
+      -GNinja \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=OFF
+    ninja
+  )
+
+  cd $SRC/${name}-${version}
+  DESTDIR="${PKG}" ninja -C build-shared install
+  DESTDIR="${PKG}" ninja -C build-static install
+
+  install -Dm644 LICENSE.txt "${PKG}"/usr/share/licenses/$name/LICENSE
+
+  cd "${PKG}"/usr/lib
+  for lib in *.so; do
+    ln -sf "${lib}" "${lib}.0"
+  done
+}
