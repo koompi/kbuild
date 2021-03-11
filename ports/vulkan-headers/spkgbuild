@@ -1,0 +1,22 @@
+# description: Vulkan header files
+# URL:         https://www.khronos.org/vulkan/
+# Maintainer:  protonesso, nagakamira at gmail dot com
+# depends:  cmake ninja
+# Section:     devel
+
+name=vulkan-headers
+version=1.2.169
+release=1
+source="https://github.com/KhronosGroup/Vulkan-Headers/archive/v$version.tar.gz::archive=Vulkan-Headers-$version.tar.gz"
+
+build() {
+	cd "$SRC"/Vulkan-Headers-$version
+	mkdir -p build
+	cd build
+	cmake "$SRC"/Vulkan-Headers-$version \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_BUILD_TYPE=MinSizeRel \
+		-Wno-dev -G Ninja
+	ninja
+	DESTDIR="$PKG" ninja install
+}

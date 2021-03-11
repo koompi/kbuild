@@ -14,3 +14,4 @@ known bugs right now:
 13. Fix nvme by install pciutils /not yet know whether it works
 14. mmcblk
 15. maybe need to load modules
+16. Mesa error maybe dued to musl, dont forget check screenshot i took.

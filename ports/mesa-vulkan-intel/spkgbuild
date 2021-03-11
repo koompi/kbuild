@@ -1,0 +1,15 @@
+# description: intel vulkan mesa
+# depends: gettext flex llvm pkg-config python3-mako glslang wayland-protocols wayland elfutils expat libxdamage libxvmc libxxf86vm libatomic libdrm libffi libva libvdpau libxshmfence ncurse zlib llvm libsensors libxrandr libglvd libztsd libxml2 lua53 libarchieve libglvnd
+
+
+name=mesa-vulkan-intel
+version=20.3.4
+release=1
+source="https://mesa.freedesktop.org/archive/mesa-${version}.tar.xz
+	0001-radeonsi-On-Aarch64-force-persistent-buffers-to-GTT.patch
+	add-use-elf-tls.patch
+	gen-git_sha1_h.patch
+	musl-endian.patch
+	musl-stacksize.patch
+	musl.patch
+	no-unlink-megadrivers.patch"
