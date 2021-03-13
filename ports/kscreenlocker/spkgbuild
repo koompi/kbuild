@@ -1,0 +1,17 @@
+# description: Library and components for secure lock screen architecture
+# depends: kidletime kwayland kdeclarative perl extra-cmake-modules kdoctools kcmutils libxcursor kcmutils
+name=kscreenlocker
+version=5.21.2
+release=1
+arch=(x86_64)
+url='https://kde.org/plasma-desktop/'
+license=(LGPL)
+source="https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig})
+
+build() {
+  cmake -B build -S $name-$version \
+    -DCMAKE_INSTALL_LIBEXECDIR=/usr/lib \
+    -DBUILD_TESTING=OFF
+  cmake --build build
+  DESTDIR="$PKG" cmake --install build
+}
