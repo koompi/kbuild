@@ -1,20 +1,25 @@
-# description	: Generates status bar to use with i3bar, dzen2 or xmobar
-# depends	: confuse yajl libnl alsa-lib pulseaudio asciidoc xmlto
-
+# description: Generates status bar for dzen2, xmobar or similar
+# depends: alsa-lib asciidoc autoconf automake confuse libnl3 linux-headers yajl xmlto
 name=i3status
 version=2.13
-release=1
-backup="etc/i3status.conf"
-source="https://i3wm.org/i3status/$name-$version.tar.bz2"
+release=3
+options="!check" # No test suite
+source="https://i3wm.org/i3status/i3status-$version.tar.bz2
+	no-pulseaudio.patch
+	"
 
 build() {
 	cd $name-$version
-	autoreconf -fi
-	mkdir build
-	cd build
+
+	patch -Np1 -i $SRC/no-pulseaudio.patch
+
+	autoreconf -vif
+	mkdir -p build && cd build
+
 	../configure \
 		--prefix=/usr \
-		--sysconfdir=/etc
+		--sysconfdir=/etc \
+		--disable-pulseaudio
 	make
-	make DESTDIR=$PKG install
+	make DESTDIR="$PKG" install
 }
