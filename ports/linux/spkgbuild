@@ -25,7 +25,7 @@ build() {
 
 	make $cross mrproper
 
-	cp $SRC/arch-config ./.config
+	cp $SRC/venconfig ./.config
 	#cp $SRC/config ./.config
 	make olddefconfig
 
@@ -34,7 +34,7 @@ build() {
 
 	kernver=${version}$(grep CONFIG_LOCALVERSION= .config | cut -d '"' -f2)
 
-	#make menuconfig
+	make menuconfig
 	make $cross olddefconfig
 	make $cross bzImage modules
 	make $cross INSTALL_MOD_PATH=$PKG modules_install

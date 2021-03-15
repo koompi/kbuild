@@ -1,0 +1,42 @@
+# description: Library for applications dealing with netlink sockets
+# depends: linux-headers flex bison libtool autoconf automake
+name=libnl3
+version=3.5.0
+release=0
+url="http://www.infradead.org/~tgr/libnl/"
+arch="all"
+checkdepends="check-dev"
+subpackages="$pkgname-dev $pkgname-doc $pkgname-cli"
+source="https://github.com/thom311/libnl/releases/download/libnl${version//./_}/libnl-$version.tar.gz
+	libnl3-musl.patch
+	"
+
+
+
+build() {
+	cd libnl-$version
+
+#	patch -Np0 -i $SRC/libnl3-musl.patch
+
+	autoreconf -vif
+
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--localstatedir=/var \
+		--disable-static \
+		--enable-unit-tests
+	make
+	make DESTDIR="$PKG" install
+
+#	pkgdesc="Command line interface utils for libnl3"
+#	mkdir -p usr/lib/
+#	mv "$PKG"/usr/lib/libnl-cli*.so.* \
+#		"$PKG"/usr/lib/libnl \
+#		usr/lib/
+#	mv "$PKG"/usr/bin "$subpkgdir"/usr/
+
+}

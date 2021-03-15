@@ -1,24 +1,89 @@
-# description	: Management tools and libraries relating to cryptography
+# description: Toolkit for Transport Layer Security (TLS)
+# depends: perl
 
 name=openssl
-version=1.1.0
-release=1
-source="https://openssl.org/source/$name-$version.tar.gz"
+version=1.1.1j
+_abiver=${version%.*}
+release=0
+url="https://www.openssl.org/"
+arch="all"
+replaces="libressl"
+makedepends_build="perl"
+makedepends="$makedepends_host $makedepends_build"
+subpackages="$name-dbg $name-libs-static $name-dev $name-doc
+	libcrypto$_abiver:_libcrypto libssl$_abiver:_libssl"
+source="https://www.openssl.org/source/openssl-$version.tar.gz
+	man-section.patch
+	ppc64.patch
+	"
+
+# secfixes:
+#   1.1.1j-r0:
+#     - CVE-2021-23841
+#     - CVE-2021-23840
+#     - CVE-2021-23839
+#   1.1.1i-r0:
+#     - CVE-2020-1971
+#   1.1.1g-r0:
+#     - CVE-2020-1967
+#   1.1.1d-r3:
+#     - CVE-2019-1551
+#   1.1.1d-r1:
+#     - CVE-2019-1547
+#     - CVE-2019-1549
+#     - CVE-2019-1563
+#   1.1.1b-r1:
+#     - CVE-2019-1543
+#   1.1.1a-r0:
+#     - CVE-2018-0734
+#     - CVE-2018-0735
 
 build() {
+
 	cd $name-$version
 
-  	./config --prefix=/usr         \
-	         --openssldir=/etc/ssl \
-	         --libdir=lib          \
-	         shared                \
-	         zlib-dynamic
+#	patch -Np0 -i $SRC/man-section.patch
+#	patch -Np0 -i $SRC/ppc64.patch
+
+#	local _target _optflags
+#
+#	# openssl will prepend crosscompile always core CC et al
+#	CC=${CC#${CROSS_COMPILE}}
+#	CXX=${CXX#${CROSS_COMPILE}}
+#	CPP=${CPP#${CROSS_COMPILE}}
+#
+#	# determine target OS for openssl
+#	case "$CARCH" in
+#		aarch64*)	_target="linux-aarch64" ;;
+#		arm*)		_target="linux-armv4" ;;
+#		mips64*)	_target="linux64-mips64" ;;
+#		# explicit _optflags is needed to prevent automatic -mips3 addition
+#		mips*)		_target="linux-mips32"; _optflags="-mips32" ;;
+#		ppc)		_target="linux-ppc" ;;
+#		ppc64)		_target="linux-ppc64" ;;
+#		ppc64le)	_target="linux-ppc64le" ;;
+#		x86)		_target="linux-elf" ;;
+#		x86_64)		_target="linux-x86_64"; _optflags="enable-ec_nistp_64_gcc_128" ;;
+#		s390x) 		_target="linux64-s390x";;
+#		*)		msg "Unable to determine architecture from (CARCH=$CARCH)" ; return 1 ;;
+#	esac
+
+	# Configure assumes --options are for it, so can't use
+	# gcc's --sysroot fake this by overriding CC
+#	[ -n "$CBUILDROOT" ] && CC="$CC --sysroot=$CBUILDROOT"
+
+	perl ./Configure $_target --prefix=/usr \
+		--libdir=lib \
+		--openssldir=/etc/ssl \
+		shared no-zlib $_optflags \
+		no-async no-comp no-idea no-mdc2 no-rc5 no-ec2m \
+		no-sm2 no-sm4 no-ssl2 no-ssl3 no-seed \
+		no-weak-ssl-ciphers \
+		$CPPFLAGS $CFLAGS $LDFLAGS -Wa,--noexecstack
 	make
 
-	# disable static lib
-	sed -i '/INSTALL_LIBS/s/libcrypto.a libssl.a//' Makefile
+	make DESTDIR="$PKG" install
+	# remove the script c_rehash
+	rm "$PKG"/usr/bin/c_rehash
 
-	make DESTDIR=$PKG MANDIR=/usr/share/man MANSUFFIX=ssl install
-
-	rm -r $PKG/usr/share/doc
 }

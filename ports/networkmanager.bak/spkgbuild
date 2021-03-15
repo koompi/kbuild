@@ -1,14 +1,12 @@
 # description	: Network connection manager and user applications
-# homepage	: https://wiki.gnome.org/Projects/NetworkManager
 # depends	: gobject-introspection vala glib libndp eudev curl util-linux nss nspr readline newt intltool libxslt dbus polkit python3-gobject3
 
 name=networkmanager
-version=1.22.10
+version=1.26.4
 release=1
-backup="etc/NetworkManager/NetworkManager.conf"
-source="https://ftp.gnome.org/pub/gnome/sources/NetworkManager/${version%.*}/NetworkManager-$version.tar.xz
+backup=(etc/NetworkManager/NetworkManager.conf)
+source="http://ftp.gnome.org/pub/gnome/sources/NetworkManager/${version%.*}/NetworkManager-$version.tar.xz
 	run
-	reallocarray.patch
 	musl.patch
 	musl-basic.patch
 	musl-fix-includes.patch
@@ -16,28 +14,32 @@ source="https://ftp.gnome.org/pub/gnome/sources/NetworkManager/${version%.*}/Net
 	fix-musl-qsort_r.patch
 	musl-process-util.patch
 	musl-network-support.patch
+	musl-compar.patch
+	py3.patch
+	musl-no-drand.patch
+	reallocarray.patch
 	fix-musl-linux-header.diff"
 
 build() {
 	cd NetworkManager-$version
 
 	patch -Np0 -i $SRC/musl-basic.patch
+	#patch -Np0 -i $SRC/musl-no-drand.patch
 	patch -Np0 -i $SRC/musl-fix-includes.patch
+	patch -Np0 -i $SRC/musl-compar.patch
+	#patch -Np0 -i $SRC/py3.patch
+	patch -Np0 -i $SRC/reallocarray.patch
 	patch -Np0 -i $SRC/musl-use-srand48.patch
 	patch -Np0 -i $SRC/fix-musl-qsort_r.patch
 	patch -Np0 -i $SRC/musl-process-util.patch
 	patch -Np0 -i $SRC/musl-network-support.patch
 	patch -Np0 -i $SRC/fix-musl-linux-header.diff
-	patch -Np0 -i $SRC/reallocarray.patch
-	
 	# Fix a missing meson.build file for initrd hooks
 	sed '/initrd/d' -i src/meson.build
 
-	export CFLAGS="$CFLAGS -DRTLD_DEEPBIND=0"
-
 	mkdir build
 	cd    build
-	
+
 	meson --prefix /usr              \
 	      --sysconfdir /etc          \
 	      --libexecdir lib           \
@@ -67,6 +69,9 @@ cat >> $PKG/etc/NetworkManager/NetworkManager.conf << "EOF"
 [main]
 plugins=keyfile
 EOF
+
+	# rc service
+	install -Dm755 $SRC/rc.$name $PKG/etc/rc.d/$name
 
 	# runit service
 	install -Dm755 $SRC/run $PKG/etc/sv/$name/run

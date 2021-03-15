@@ -1,0 +1,50 @@
+# description: Internet Wireless Daemon
+# depends: dbus readline linux-headers
+
+name=iwd
+version=1.12
+release=0
+url="https://iwd.wiki.kernel.org/"
+arch="all"
+license="LGPL-2.1-or-later"
+checkdepends="coreutils"
+source="https://mirrors.edge.kernel.org/pub/linux/network/wireless/iwd-$version.tar.gz
+	dbus-netdev-group.patch
+	fix-rawmemchr.patch
+	iwd.initd
+	main.conf
+	iwd.post-upgrade
+	"
+
+case "$CARCH" in
+mips*)	options="!check";;
+esac
+
+build() {
+
+	cd $name-$version
+
+	patch  -Np0 -i $SRC/dbus-netdev-group.patch
+	patch  -Np0 -i $SRC/fix-rawmemchr.patch
+
+
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--localstatedir=/var \
+		--disable-systemd-service \
+		--enable-sim-hardcoded \
+		--enable-wired \
+		--enable-tools
+	make
+
+	make DESTDIR="$PKG" install
+#	install -m750 -d "$PKG"/var/lib/$name
+#	install -m755 -D "$PKG"/$name.initd \
+#		"$PKG"/etc/init.d/$name
+#	install -m644 -D "$SRC"/main.conf \
+#		"$PKG"/etc/$name/main.conf
+}

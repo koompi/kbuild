@@ -1,0 +1,29 @@
+# Contributor: Hangsiahong
+# description: Meta package to pull in correct libc
+
+name=bsd-compat-headers
+version=0.7.2
+release=3
+arch="noarch"
+license="BSD-2-Clause AND BSD-3-Clause"
+options="!check" # No test suite
+makedepends="$makedepends_build $makedepends_host"
+depends="$CLIBC-dev"
+subpackages="libc-utils:utils bsd-compat-headers:bsdcompat"
+source="sys-cdefs.h
+	sys-queue.h
+	sys-tree.h
+	sgidefs.h
+	"
+
+build() {
+
+	mkdir -pv $name
+	cd $name
+
+	case "$CTARGET" in
+	mips*)
+		install -D "$SRC"/sgidefs.h "$PKG"/usr/include/sgidefs.h
+		;;
+	esac
+}
