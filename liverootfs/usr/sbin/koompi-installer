@@ -347,17 +347,17 @@ install_now() {
 	chroot_run ln -sf /usr/share/zoneinfo/$var_timezone /etc/localtime
 
 	echo "Setup fstab..."
-	genfstab -U $INSTALLROOT >> $INSTALLROOT/etc/fstab
-	#echo "# <device> <dir> <type> <options> <dump> <fsck>" > $INSTALLROOT/etc/fstab
-	#echo "UUID=$(blkid -o value -s UUID "$var_partition") / $var_parttype defaults 1 1" >> $INSTALLROOT/etc/fstab
+	# genfstab -U $INSTALLROOT >> $INSTALLROOT/etc/fstab
+	echo "# <device> <dir> <type> <options> <dump> <fsck>" > $INSTALLROOT/etc/fstab
+	echo "UUID=$(blkid -o value -s UUID "$var_partition") / $var_parttype defaults 1 1" >> $INSTALLROOT/etc/fstab
 
-	#[ "$EFI_SYSTEM" = 1 ] && {
-	#	echo "UUID=$(blkid -o value -s UUID "$var_efi") /boot/efi vfat defaults 0 2" >> $INSTALLROOT/etc/fstab
-	#}
+	[ "$EFI_SYSTEM" = 1 ] && {
+		echo "UUID=$(blkid -o value -s UUID "$var_efi") /boot/efi vfat defaults 0 2" >> $INSTALLROOT/etc/fstab
+	}
 
-	#[ "$var_swap" = "SKIP" ] || {
-	#	echo "UUID=$(blkid -o value -s UUID "$var_swap") swap swap pri=1 0 0" >> $INSTALLROOT/etc/fstab
-	#}
+	[ "$var_swap" = "SKIP" ] || {
+		echo "UUID=$(blkid -o value -s UUID "$var_swap") swap swap pri=1 0 0" >> $INSTALLROOT/etc/fstab
+	}
 
 	echo "Creating user ($var_username)..."
 	useradd -R $INSTALLROOT -m -G users,wheel,audio,video -s /bin/bash $var_username || {
