@@ -1,4 +1,9 @@
 34f56d81492a113996d3f5d308714215  0001-musl.patch
+15a14d4303173cfeec9dc796a9e3aa74  0001-radeonsi-On-Aarch64-force-persistent-buffers-to-GTT.patch
+e5e7cfc6adda87691739a95a4f48b32d  add-use-elf-tls.patch
+c9a7e46c62ca6d0bd38dab34997c828b  adjust-cache-deflate-buffer.patch
+8c57b10fbe6bd5ae73d0efaa31d2e7ce  disable-rgb10-by-default.patch
 0dea02fb2e6b6b9316465c768745b63a  glx-tls.patch
 556338446aef8ae947a789b3e0b5e056  mesa-20.3.4.tar.xz
+8c0eb9fa8741bba2617ce30f54711e07  musl-fix-includes.patch
 4466896d5ab26396ce43be7054f1f5bd  wordsize.h

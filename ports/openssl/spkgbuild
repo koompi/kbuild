@@ -42,8 +42,8 @@ build() {
 
 	cd $name-$version
 
-#	patch -Np0 -i $SRC/man-section.patch
-#	patch -Np0 -i $SRC/ppc64.patch
+	patch -Np0 -i $SRC/man-section.patch
+	patch -Np0 -i $SRC/ppc64.patch
 
 #	local _target _optflags
 #
@@ -72,7 +72,7 @@ build() {
 	# gcc's --sysroot fake this by overriding CC
 #	[ -n "$CBUILDROOT" ] && CC="$CC --sysroot=$CBUILDROOT"
 
-	perl ./Configure $_target --prefix=/usr \
+	perl ./config $_target --prefix=/usr \
 		--libdir=lib \
 		--openssldir=/etc/ssl \
 		shared no-zlib $_optflags \

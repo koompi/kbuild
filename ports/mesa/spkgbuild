@@ -1,68 +1,100 @@
-# description	: OpenGL compatible 3D graphics library
-# depends	: zstd llvm python3-mako xorgproto wayland-protocols libx11 libxdamage libxrandr libxshmfence libxvmc libxxf86vm libdrm libva libvdpau libglvnd lm_sensors vulkan-loader
-
+# description: Mesa DRI OpenGL Library
+# depends: libdrm libxext libxdamage libxcb libxshmfence bison eudev expat findutils flex gettext elfutils libtool libxfixes libva libvdpau libx11 libxrandr libxt libxvmc libxxf86vm llvm makedepend meson py3-mako py3-libxml2 python3 talloc wayland wayland-protocols xorgproto zlib zstd glslang
+# Thanks to Maintainer: Natanael Copa <ncopa@alpinelinux.org>
 name=mesa
 version=20.3.4
 release=1
-source="https://mesa.freedesktop.org/archive/$name-$version.tar.xz
+url="https://www.mesa3d.org"
+subpackages="
+	$name-dbg
+	$name
+	$name-dri-classic:_dri
+	$name-dri-gallium:_dri
+	$name-va-gallium:_va
+	$name-vdpau-gallium:_vdpau
+	$name-glapi $name-egl $name-gl $name-gles
+	$name-xatracker $name-osmesa $name-gbm
+	$name-vulkan-ati:_vulkan
+	$name-dri-ati:_dri_deprecated
+	$name-dri-nouveau:_dri_deprecated
+	"
+
+source="
+	https://mesa.freedesktop.org/archive/mesa-$version.tar.xz
 	wordsize.h
 	glx-tls.patch
-	0001-musl.patch"
+	0001-musl.patch
+	adjust-cache-deflate-buffer.patch
+	musl-fix-includes.patch
+	add-use-elf-tls.patch
+	disable-rgb10-by-default.patch
+	0001-radeonsi-On-Aarch64-force-persistent-buffers-to-GTT.patch
+	"
+options="!check" # we skip tests intentionally
 
 
 build() {
-	cd $name-$version
+
+    cd $name-$version
 
 	mkdir -pv include/bits
 	cp $SRC/wordsize.h include/bits/
 
-	patch -Np1 -i "$SRC"/glx-tls.patch
-	patch -Np1 -i "$SRC"/0001-musl.patch
+    # patch -Np1 -i "$SRC"/glx-tls.patch
+	# patch -Np1 -i "$SRC"/0001-musl.patch
+    patch -Np1 -i $SRC/adjust-cache-deflate-buffer.patch
+	patch -Np1 -i $SRC/musl-fix-includes.patch
+	patch -Np1 -i $SRC/add-use-elf-tls.patch
+	patch -Np1 -i $SRC/disable-rgb10-by-default.patch
+	patch -Np1 -i $SRC/0001-radeonsi-On-Aarch64-force-persistent-buffers-to-GTT.patch
 
+	export CFLAGS="$CFLAGS -D_XOPEN_SOURCE=700"
 
 	python3 bin/git_sha1_gen.py --output include/git_sha1.h
 
-	mkdir build
-	cd    build
+	mkdir build && cd build
 
-	#meson --prefix=/usr \
-	#      --sysconfdir=/etc \
-	#      -Dvalgrind=false \
-	#      -Dglx=dri \
-	#      -Degl=true \
-	#      -Dosmesa=gallium \
-	#      -Dgallium-nine=true \
-	#      -Dplatforms=x11 \
-	#      -Dglvnd=true \
-	#      -Dllvm=true \
-	#      -Dgallium-drivers=r300,r600,svga,swrast,radeonsi,nouveau \
-	#      -Dvulkan-drivers=amd,intel \
-	#      -Ddri-drivers=i915,i965,nouveau \
-	#      ..
+
 	meson --prefix=/usr \
 	      --sysconfdir=/etc \
-	      -Dvalgrind=disabled \
-	      -Dglx=dri \
-	      -Degl=enabled \
-	      -Delf-use-tls=false \
-	      -Dgbm=enabled \
-	      -Dgles1=enabled \
-	      -Dgles2=enabled \
-	      -Dosmesa=gallium \
-	      -Dgallium-nine=true \
-	      -Dplatforms=x11 \
-	      -Dglvnd=true \
-	      -Dllvm=enabled \
-	      -Dlmsensors=enabled \
-	      -Dplatforms=x11,wayland \
-	      -Dshared-glappi=enabled \
-	      -Dgallium-drivers=r300,r600,svga,swrast,radeonsi,nouveau \
-	      -Dvulkan-drivers=amd,intel \
-	      -Ddri-drivers=i915,i965,nouveau \
-	      ..
+		-Dgallium-drivers=r300,r600,svga,swrast,radeonsi,nouveau \
+		-Ddri-drivers=i915,i965,nouveau \
+		-Dvulkan-drivers=intel \
+		-Dplatforms=x11,wayland \
+		-Dllvm=true \
+		-Dshared-llvm=true \
+		-Dshared-glapi=true \
+		-Dgbm=true \
+		-Dglx=dri \
+		-Dopengl=true \
+		-Dosmesa=gallium \
+		-Dgles1=false \
+		-Dgles2=true \
+		-Degl=true \
+		-Dgallium-xa=true \
+		-Dgallium-vdpau=true \
+		-Dgallium-va=true \
+		-Dgallium-xvmc=false \
+		-Dgallium-nine=false \
+		-Db_ndebug=true \
+		-Dglx-read-only-text=true -Dasm=false \
+		..
+
+		#$_arch_opts \
+
 	ninja
 	DESTDIR=$PKG ninja install
 
-	# indirect rendering symlink
-	ln -svf libGLX_mesa.so.0 $PKG/usr/lib/libGLX_indirect.so.0
+
+
+	# Print config
+#	meson configure output
+#
+#	# parallel build workaround
+#	ninja -C output src/compiler/nir/nir_intrinsics.h
+#
+#	meson compile ${JOBS:+-j ${JOBS}} -C output
+#
+#    DESTDIR="$PKG" meson install --no-rebuild -C output
+
 }

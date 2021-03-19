@@ -1,0 +1,19 @@
+# description: utility for making makefile dependencies
+# depends: xorgproto utils-macros
+
+name=makedepend
+version=1.0.6
+release=0
+url="http://www.freedesktop.org/"
+source="https://www.x.org/releases/individual/util/makedepend-$version.tar.bz2"
+
+build() {
+	cd $name-$version
+	./configure \
+		--build=$HOST \
+		--host=$TARGET \
+		--prefix=/usr \
+		--sysconfdir=/etc
+	make
+	make DESTDIR="$PKG" install
+}

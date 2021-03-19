@@ -274,7 +274,7 @@ printcurrent() {
 	echo " Root Password:   $var_rootpwd"
 	echo " Grub:            $var_grub"
 	echo "+------------------------------+"
-	echo	
+	echo
 }
 
 chroot_run() {
@@ -284,7 +284,7 @@ chroot_run() {
 
 install_now() {
 	continue_install
-	
+
 	case $var_parttype in
 		ext4|ext3|ext2) mkfs.$var_parttype -F -L KOOMPILinux $var_partition &>/dev/null;;
 		xfs) mkfs.xfs -f -m crc=0 -L KOOMPILinux $var_partition &>/dev/null;;
@@ -295,7 +295,7 @@ install_now() {
 		echo "Failed create '$var_parttype' filesystem on '$var_partition'"
 		exit 1
 	}
-	
+
 	[ "$EFI_SYSTEM" = 1 ] && {
 		echo "Formatting partition $var_efi to fat32"
 		mkfs.vfat -F32 $var_efi &>/dev/null || {
@@ -303,7 +303,7 @@ install_now() {
 			exit 1
 		}
 	}
-	
+
 	[ "$var_swap" = "SKIP" ] || {
 		echo "Formatting partition $var_swap to swap"
 		mkswap $var_swap &>/dev/null || {
@@ -311,15 +311,15 @@ install_now() {
 			exit 1
 		}
 	}
-	
+
 	rm -fr $INSTALLROOT
 	mkdir -p $INSTALLROOT
-	
+
 	mount $var_partition $INSTALLROOT || {
 		print_error_msg "Error mount '$var_partition' to $INSTALLROOT"
 		exit 1
 	}
-	
+
 	[ "$EFI_SYSTEM" = 1 ] && {
 		mkdir -p $INSTALLROOT/boot/efi || {
 			echo "Error create '$VENOMROOT/boot/efi' directory"
@@ -331,57 +331,58 @@ install_now() {
 			exit 1
 		}
 	}
-	
+
 	totalsfs=$(unsquashfs -l $ROOTSFS | wc -l)
 	countsfs=0
-	
+
 	unsquashfs -f -i -d $INSTALLROOT $ROOTSFS | sed "s:$INSTALLROOT::" | while read -r line; do
 		countsfs=$(( countsfs + 1 ))
 		echo " $(( 100*countsfs/totalsfs ))% $line"
 	done
-	
+
 	for sv in dhcpcd sysklogd gpm dbus lxdm networkmanager; do
 		chroot_run ln -s /etc/sv/$sv /var/service
 	done
-	
-	chroot_run ln -s /usr/share/zoneinfo/$var_timezone /etc/localtime
-	
+
+	chroot_run ln -sf /usr/share/zoneinfo/$var_timezone /etc/localtime
+
 	echo "Setup fstab..."
-	echo "# <device> <dir> <type> <options> <dump> <fsck>" > $INSTALLROOT/etc/fstab
-	echo "UUID=$(blkid -o value -s UUID "$var_partition") / $var_parttype defaults 1 1" >> $INSTALLROOT/etc/fstab
+	genfstab -U $INSTALLROOT >> $INSTALLROOT/etc/fstab
+	#echo "# <device> <dir> <type> <options> <dump> <fsck>" > $INSTALLROOT/etc/fstab
+	#echo "UUID=$(blkid -o value -s UUID "$var_partition") / $var_parttype defaults 1 1" >> $INSTALLROOT/etc/fstab
 
-	[ "$EFI_SYSTEM" = 1 ] && {
-		echo "UUID=$(blkid -o value -s UUID "$var_efi") /boot/efi vfat defaults 0 2" >> $INSTALLROOT/etc/fstab
-	}
+	#[ "$EFI_SYSTEM" = 1 ] && {
+	#	echo "UUID=$(blkid -o value -s UUID "$var_efi") /boot/efi vfat defaults 0 2" >> $INSTALLROOT/etc/fstab
+	#}
 
-	[ "$var_swap" = "SKIP" ] || {
-		echo "UUID=$(blkid -o value -s UUID "$var_swap") swap swap pri=1 0 0" >> $INSTALLROOT/etc/fstab
-	}
-	
+	#[ "$var_swap" = "SKIP" ] || {
+	#	echo "UUID=$(blkid -o value -s UUID "$var_swap") swap swap pri=1 0 0" >> $INSTALLROOT/etc/fstab
+	#}
+
 	echo "Creating user ($var_username)..."
 	useradd -R $INSTALLROOT -m -G users,wheel,audio,video -s /bin/bash $var_username || {
 		echo "Error configure user '$user_var'"
 		exit 1
 	}
-	
+
 	echo "Setting user password ($var_username)..."
 	echo "$var_username:$var_userpwd" | chpasswd -R $INSTALLROOT -c SHA512 || {
 		echo "Error setting user password"
 		exit 1
 	}
-	
+
 	echo "Setting root password..."
 	echo "root:$var_rootpwd" | chpasswd -R $INSTALLROOT -c SHA512 || {
 		echo "Error setting root password"
 		exit 1
 	}
-	
+
 	echo "Generating initramfs..."
 	chroot_run mkinitramfs &>/dev/null || {
 		print_error_msg "Error generating initramfs"
 		exit 1
 	}
-	
+
 	[ "$var_grub" = "SKIP" ] || {
 		if [ "$EFI_SYSTEM" = 1 ]; then
 			echo "Installing grub (EFI)..."
@@ -402,9 +403,9 @@ install_now() {
 			exit 1
 		}
 	}
-	
+
 	umount -R $INSTALLROOT
-	
+
 	echo "Installation done!"
 }
 
