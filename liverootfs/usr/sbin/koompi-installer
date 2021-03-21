@@ -349,6 +349,7 @@ install_now() {
 	echo "Setup fstab..."
 	# genfstab -U $INSTALLROOT >> $INSTALLROOT/etc/fstab
 	echo "# <device> <dir> <type> <options> <dump> <fsck>" > $INSTALLROOT/etc/fstab
+
 	echo "UUID=$(blkid -o value -s UUID "$var_partition") / $var_parttype defaults 1 1" >> $INSTALLROOT/etc/fstab
 
 	[ "$EFI_SYSTEM" = 1 ] && {
