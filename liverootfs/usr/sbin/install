@@ -628,20 +628,20 @@ install_now() {
 		#sed -e "s,.*autologin.*=.*,autologin=$USER," -i $KOOMPIROOT/etc/lxdm/lxdm.conf
 	fi
 	
-	print_info "Resolve temporary packages..."
-	scratch deplist $(cat $LISTPKG) $PKGKEEP | awk '{print $2}' >> $PKGSTRIP
-	pkgquery installed | awk '{print $1}' >> $PKGINISO
+	# print_info "Resolve temporary packages..."
+	# scratch deplist $(cat $LISTPKG) $PKGKEEP | awk '{print $2}' >> $PKGSTRIP
+	# pkgquery installed | awk '{print $1}' >> $PKGINISO
 	
-	for i in $(grep -Fxv -f $PKGSTRIP $PKGINISO); do
-		[ "$i" ] || continue
-		print_info "Removing temporary packages ($i)..."
-		run_chroot pkgdel $i &>/dev/null
-	done
+	# for i in $(grep -Fxv -f $PKGSTRIP $PKGINISO); do
+		# [ "$i" ] || continue
+		# print_info "Removing temporary packages ($i)..."
+		# run_chroot pkgdel $i &>/dev/null
+	# done
 	
 	#mountpoint -q $KOOMPIROOT/boot/efi && umount $KOOMPIROOT/boot/efi
 	#mountpoint -q $KOOMPIROOT && umount $KOOMPIROOT
 	umount -R $KOOMPIROOT
-	rm -f $PKGSTRIP $PKGINISO
+	# rm -f $PKGSTRIP $PKGINISO
 	_dialog --msgbox "Installation done\nYou can reboot now" 7 30
 	exit 0
 }
