@@ -1,5 +1,6 @@
 mesa
 dbus
+linux
 dbus-glib
 git
 xorg
