@@ -1,0 +1,28 @@
+# description: udev startup scripts for runit
+# Contributor: Valery Kartel <valery.kartel@gmail.com>
+# Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+name=udev-init-scripts
+version=34
+release=0
+url="https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/udev-init-scripts"
+arch="noarch"
+options="!check" # They are only scripts
+license="GPL-2.0-only"
+replaces="udev"
+subpackages="$name-runit"
+install="$name.post-install $name.post-upgrade"
+source="https://gitweb.gentoo.org/proj/udev-gentoo-scripts.git/snapshot/udev-gentoo-scripts-$version.tar.gz
+	modloop.patch
+	"
+builddir="$SRC/udev-gentoo-scripts-$version"
+
+build() {
+	cd udev-gentoo-scripts-$version
+	
+	patch -Np1 -i $SRC/modloop.patch
+
+	make
+	make DESTDIR="$PKG" install
+
+}
+

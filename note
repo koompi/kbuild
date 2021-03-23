@@ -15,3 +15,6 @@ known bugs right now:
 14. mmcblk
 15. maybe need to load modules
 16. Mesa error maybe dued to musl, dont forget check screenshot i took.
+
+
+17: comment on MMC Block

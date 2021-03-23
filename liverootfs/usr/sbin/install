@@ -688,8 +688,8 @@ Set necessary options before start the installation \n"
 	fi
 }
 
-if [ -f "/run/initramfs/ram/KOOMPIROOTfs.sfs" ]; then
-	ROOTSFS="/run/initramfs/ram/KOOMPIROOTfs.sfs"
+if [ -f "/run/initramfs/ram/rootfs.sfs" ]; then
+	ROOTSFS="/run/initramfs/ram/rootfs.sfs"
 	#LISTPKG="/run/initramfs/ram/pkglist"
 	CUSTOMDIR="/run/initramfs/ram/customize"
 else

@@ -12,7 +12,9 @@ source="http://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$version.tar.xz
 	config
 	venconfig
 	aconfig
+	jiren
 	voidconfig
+	alpine-new
 	koompiconfig
 	config-alpine
 	arch-config"
@@ -27,7 +29,7 @@ build() {
 	make $cross mrproper
 
 	#cp $SRC/config-alpine ./.config
-	cp $SRC/venconfig ./.config
+	cp $SRC/jiren ./.config
 	#cp $SRC/config ./.config
 	make olddefconfig
 

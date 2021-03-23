@@ -1,34 +1,53 @@
-# description	: Programs for dynamic creation of device nodes
-# homepage	: http://wiki.gentoo.org/wiki/Project:Eudev
-# depends	: util-linux kmod
-
+# description: OpenRC compatible fork of systemd-udev
+# depends: udev-init-scripts gperf glib linux-headers kmod gobject-introspection util-linux
+# Contributor: Sören Tempel <soeren+alpine@soeren-tempel.net>
+# Maintainer: Natanael Copa <ncopa@alpinelinux.org>
 name=eudev
-version=3.2.9
-release=1
-source="http://dev.gentoo.org/~blueness/$name/$name-$version.tar.gz"
+version=3.2.10
+release=0
+url="https://wiki.gentoo.org/wiki/Project:Eudev"
+arch="all"
+license="GPL-2.0-only"
+replaces="udev"
+provides="udev=176"
+triggers="eudev.trigger=/lib/udev/rules.d:/usr/lib/udev/rules.d"
+source="https://dev.gentoo.org/~blueness/eudev/eudev-$version.tar.gz
+	default-rules.patch
+	load-fbcon.patch
+	udev-postmount.initd
+	setup-udev"
 
 build() {
-	if [ "$BOOTSTRAP" ]; then
-		flags="--host=$TARGET --build=$HOST"
-	fi
-
+	# we need disable kmod til busybox depmod generates binary formats:
+	# modules.dep.bin modules.alias.bin modules.symbols.bin
+	# modules.builtin.bin
 	cd $name-$version
 
-	./configure $flags \
-		    --prefix=/usr           \
-	            --bindir=/sbin          \
-	            --sbindir=/sbin         \
-	            --libdir=/usr/lib       \
-	            --sysconfdir=/etc       \
-	            --libexecdir=/lib       \
-	            --with-rootprefix=      \
-	            --with-rootlibdir=/lib  \
-	            --enable-manpages       \
-	            --disable-static
+	patch -Np1 -i $SRC/default-rules.patch
+	patch -Np1 -i $SRC/load-fbcon.patch
+
+	./configure \
+		--build=$HOST \
+		--host=$TARGET \
+		--sysconfdir=/etc \
+		--with-rootprefix= \
+		--with-rootrundir=/run \
+		--with-rootlibexecdir=/lib/udev \
+		--libdir=/usr/lib \
+		--enable-split-usr \
+		--enable-manpages \
+		--disable-hwdb \
+		--enable-kmod \
+		--exec-prefix=/ \
+		--bindir=/bin
 	make
+	make DESTDIR="$PKG" sharepkgconfigdir=/usr/lib/pkgconfig \
+		install
 
-	mkdir -pv $PKG/lib/udev/rules.d
-	mkdir -pv $PKG/etc/udev/rules.d
-
-	make DESTDIR=$PKG install
+	install -Dm755 "$SRC"/udev-postmount.initd \
+		"$SRC"/etc/init.d/udev-postmount
+	install -Dm755 "$SRC"/setup-udev \
+		"$PKG"/sbin/setup-udev
 }
+
+
