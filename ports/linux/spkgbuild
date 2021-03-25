@@ -29,8 +29,8 @@ build() {
 	make $cross mrproper
 
 	#cp $SRC/config-alpine ./.config
-	cp $SRC/jiren ./.config
-	#cp $SRC/config ./.config
+	# cp $SRC/jiren ./.config
+	cp $SRC/alpine-new ./.config
 	make olddefconfig
 
 	sed '/^CONFIG_LOCALVERSION=/d' -i .config
