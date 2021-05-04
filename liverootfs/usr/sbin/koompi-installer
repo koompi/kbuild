@@ -403,7 +403,7 @@ install_now() {
 			print_error_msg "Error generating grub config"
 			exit 1
 		}
-		chroot_run sed -i s/quiet/rootfstype=ext4\ rw\ cma=1024M/ grub.cfg
+		# chroot_run sed -i s/quiet/rootfstype=ext4\ rw\ cma=1024M/ grub.cfg
 	}
 
 	umount -R $INSTALLROOT
